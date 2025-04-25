@@ -13,6 +13,7 @@ import Contact from './pages/dashboard/Contact';
 import Team from './pages/dashboard/Team';
 import News from './pages/dashboard/News';
 import Products from './pages/dashboard/Products';
+import NotFound from './pages/not-found/NotFound';
 
 function App() {
   const token = localStorage.getItem('access_token')
@@ -29,6 +30,7 @@ function App() {
   return (
     <>
       <Routes>
+        
         <Route path='/' element={<Login />} />
         <Route path='/dashboard' element={<Dashboard />}>
           <Route path='products' element={<Products />}/>
@@ -40,7 +42,9 @@ function App() {
           <Route path='contact' element={<Contact />}/>
           <Route path='team' element={<Team />}/>
           <Route path='news' element={<News />}/>
+          <Route path='*' element={<NotFound />}/>
         </Route>
+          <Route path='*' element={<NotFound />}/>
 
       </Routes>
 
