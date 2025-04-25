@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
 
+    const [loading, setLoading] = useState(false)
+
     const onFinishFailed = errorInfo => {
         console.log('Failed:', errorInfo);
     };
@@ -16,6 +18,7 @@ const Login = () => {
     const [password, setPassword] = useState()
     
     const handleLogin = async () => {
+        setLoading(true)
         try {
             const response = await axios.post("https://back.ifly.com.uz/api/auth/login", {login, password}, 
                 {
@@ -34,6 +37,9 @@ const Login = () => {
         catch(error) {
             console.log(error);
             toast.error(error?.response?.data?.message?.message)
+        }
+        finally{
+            setLoading(false)
         }
     }
 
@@ -71,6 +77,7 @@ const Login = () => {
 
                     <Form.Item>
                         <Button
+                            loading={loading}
                             type="primary"
                             htmlType="submit"
                             className="w-full bg-green-500 hover:bg-green-600 text-white font-medium rounded-md py-2"
