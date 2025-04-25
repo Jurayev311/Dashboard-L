@@ -32,7 +32,7 @@ const Login = () => {
             toast.success(response?.data?.data?.message)
             localStorage.setItem("access_token", response?.data?.data?.access_token)
             localStorage.setItem("refresh_token", response?.data?.data?.refresh_token)
-            navigate("/dashboard")
+            navigate("/dashboard/products")
         }
         catch(error) {
             console.log(error);
