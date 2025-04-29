@@ -20,17 +20,21 @@ function App() {
   const navigate = useNavigate()
 
   useEffect(() => {
+    const currentPath = window.location.pathname;
     if (token) {
-      navigate("/dashboard/products")
+      if (currentPath === '/' || currentPath === '/dashboard') {
+        navigate("/dashboard/products");
+      }
     } else {
-      navigate('/')
+      if (currentPath !== '/') {
+        navigate('/');
+      }
     }
   }, [])
 
   return (
     <>
       <Routes>
-        
         <Route path='/' element={<Login />} />
         <Route path='/dashboard' element={<Dashboard />}>
           <Route path='products' element={<Products />}/>
@@ -44,8 +48,7 @@ function App() {
           <Route path='news' element={<News />}/>
           <Route path='*' element={<NotFound />}/>
         </Route>
-          <Route path='*' element={<NotFound />}/>
-
+        <Route path='*' element={<NotFound />}/>
       </Routes>
 
       <Toaster position='top-right' />
