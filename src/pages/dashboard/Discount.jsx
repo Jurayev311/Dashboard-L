@@ -152,7 +152,7 @@ const Discount = () => {
                         <button className="bg-yellow-400 hover:bg-yellow-500 text-white font-normal py-1 px-3 rounded">
                           Edit
                         </button>
-                        <button onClick={() => deleteDiscount(item?.id)} className="bg-rend-500 hover:bg-red-600 text-white font-normal py-1 px-3 rounded">
+                        <button onClick={() => deleteDiscount(item?.id)} className="bg-red-500 hover:bg-red-600 text-white font-normal py-1 px-3 rounded">
                           Delete
                         </button>
                       </td>
