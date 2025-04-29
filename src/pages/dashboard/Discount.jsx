@@ -96,7 +96,7 @@ const Discount = () => {
       {
         load ? (<div className='flex items-center justify-center translate-y-[220%]'><Flex align="center" gap="middle"> <Spin size="large" /> </Flex></div>) : (<div className="p-6">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold">Category</h2>
+            <h2 className="text-2xl font-bold">Discount</h2>
             <Button type="primary" onClick={showModal} style={{ backgroundColor: '#00C951', borderColor: '#00C951' }}>
               Add Discount
             </Button>
