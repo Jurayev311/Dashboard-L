@@ -83,11 +83,11 @@ const Discount = () => {
       )
       console.log(res);
       getDiscount()
-      toast.success(res?.data?.data?.message)
-
+      toast.success(`Discount with ID ${id} has been deleted successfully`)
     }
     catch (error) {
-      toast.error(error?.message?.message)
+      console.log(error);
+      toast.error(error?.response?.data?.message)
     }
   }
 
