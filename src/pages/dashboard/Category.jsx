@@ -95,7 +95,7 @@ const Category = () => {
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold">Category</h2>
             <Button type="primary" onClick={showModal} style={{ backgroundColor: '#00C951', borderColor: '#00C951' }}>
-              Open Modal
+              Add Category
             </Button>
             <Modal title="Add Category" open={isModalOpen} onOk={createCategory} onCancel={handleCancel}>
               <form action="">

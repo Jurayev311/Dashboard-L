@@ -98,7 +98,7 @@ const Discount = () => {
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold">Category</h2>
             <Button type="primary" onClick={showModal} style={{ backgroundColor: '#00C951', borderColor: '#00C951' }}>
-              Open Modal
+              Add Discount
             </Button>
             <Modal title="Add Discount" open={isModalOpen} onOk={createDiscount} onCancel={handleCancel}>
               <form action="">
