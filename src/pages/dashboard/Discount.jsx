@@ -39,7 +39,6 @@ const Discount = () => {
   useEffect(() => {
     getDiscount()
   }, [])
-  console.log(data);
 
 
   // post api
@@ -65,7 +64,6 @@ const Discount = () => {
       toast.success(res?.statusText)
     }
     catch (error) {
-      console.log(error);
       toast.error(error?.response?.data?.message?.message)
     }
   }
@@ -86,7 +84,6 @@ const Discount = () => {
       toast.success(`Discount with ID ${id} has been deleted successfully`)
     }
     catch (error) {
-      console.log(error);
       toast.error(error?.response?.data?.message)
     }
   }
