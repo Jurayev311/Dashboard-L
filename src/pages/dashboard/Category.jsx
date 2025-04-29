@@ -17,7 +17,7 @@ const Category = () => {
   };
 
 
-// get api
+  // get api
   const [data, SetData] = useState()
   const [load, SetLoad] = useState(false)
 
@@ -43,12 +43,12 @@ const Category = () => {
   // post api
   const [nameEn, SetNameEn] = useState()
   const [nameRu, SetNameRu] = useState()
-  const [nameDe, SetNameDe] = useState()  
+  const [nameDe, SetNameDe] = useState()
   const token = localStorage.getItem("access_token")
 
   const createCategory = async () => {
     try {
-      const res = await axios.post("https://back.ifly.com.uz/api/category", {name_en: nameEn, name_ru: nameRu, name_de: nameDe},
+      const res = await axios.post("https://back.ifly.com.uz/api/category", { name_en: nameEn, name_ru: nameRu, name_de: nameDe },
         {
           headers: {
             "Content-Type": "application/json",
@@ -68,7 +68,7 @@ const Category = () => {
   }
 
   // delete api
-  
+
   const deleteCategory = async (id) => {
     try {
       const res = await axios.delete(`https://back.ifly.com.uz/api/category/${id}`,
@@ -81,12 +81,12 @@ const Category = () => {
       console.log(res);
       getCategory()
       toast.success(res?.data?.data?.message)
-      
+
     }
     catch (error) {
-      toast.error(error?.message?.message)
+      toast.error(error?.response?.data?.message)
     }
-  }  
+  }
 
   return (
     <>
@@ -100,23 +100,27 @@ const Category = () => {
             <Modal title="Add Category" open={isModalOpen} onOk={createCategory} onCancel={handleCancel}>
               <form action="">
                 <div className='mb-2'>
-              <label className='font-semibold' htmlFor="">Category Name (EN)</label>
-              <Input onChange={(e) => SetNameEn(e.target.value)} placeholder="English name" />
-              </div>
-              <div className='mb-2'>
-              <label className='font-semibold' htmlFor="">Category Name (RU)</label>
-              <Input onChange={(e) => SetNameRu(e.target.value)} placeholder="Russian name" />
-              </div>
-              <div className='mb-2'>
-              <label className='font-semibold' htmlFor="">Category Name (DE)</label>
-              <Input onChange={(e) => SetNameDe(e.target.value)} placeholder="German name" />
-              </div>
+                  <label className='font-semibold' htmlFor="">Category Name (EN)</label>
+                  <Input onChange={(e) => SetNameEn(e.target.value)} placeholder="English name" />
+                </div>
+                <div className='mb-2'>
+                  <label className='font-semibold' htmlFor="">Category Name (RU)</label>
+                  <Input onChange={(e) => SetNameRu(e.target.value)} placeholder="Russian name" />
+                </div>
+                <div className='mb-2'>
+                  <label className='font-semibold' htmlFor="">Category Name (DE)</label>
+                  <Input onChange={(e) => SetNameDe(e.target.value)} placeholder="German name" />
+                </div>
               </form>
             </Modal>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="min-w-full bg-white border border-gray-300">
+            {data?.length === 0 ? (
+              <div className="flex items-center justify-center h-64">
+                <Empty description="No sizes available" />
+              </div>
+            ) : (<table className="min-w-full bg-white border border-gray-300">
               <thead>
                 <tr className="bg-gray-200 text-gray-700">
                   <th className="py-2 font-normal px-4 border border-gray-300">№</th>
@@ -146,7 +150,7 @@ const Category = () => {
                   ))
                 }
               </tbody>
-            </table>
+            </table>)}
           </div>
         </div>)
       }

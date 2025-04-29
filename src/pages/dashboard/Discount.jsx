@@ -123,7 +123,11 @@ const Discount = () => {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="min-w-full bg-white border border-gray-300">
+            {data?.length === 0 ? (
+              <div className="flex items-center justify-center h-64">
+                <Empty description="No sizes available" />
+              </div>
+            ): (<table className="min-w-full bg-white border border-gray-300">
               <thead>
                 <tr className="bg-gray-200 text-gray-700">
                   <th className="py-2 font-normal px-4 border border-gray-300">№</th>
@@ -160,7 +164,7 @@ const Discount = () => {
                   ))
                 }
               </tbody>
-            </table>
+            </table>)}
           </div>
         </div>)
       }
