@@ -12,6 +12,8 @@ const Sizes = () => {
   // get api
   const [data, SetData] = useState();
   const [load, SetLoad] = useState(false);
+  console.log(data);
+  
 
   const getSize = async () => {
     try {
