@@ -1,172 +1,223 @@
-  import axios from 'axios';
-  import React, { Fragment, useEffect, useState } from 'react';
-  import { Flex, Spin, Button, Modal, Input, Checkbox } from 'antd';
-  import toast from 'react-hot-toast';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { Flex, Spin, Button, Modal, Input, Checkbox, Empty } from 'antd';
+import toast from 'react-hot-toast';
 
-  const Discount = () => {
+const Discount = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [currentDiscount, setCurrentDiscount] = useState(null);
+  const [disc, SetDisc] = useState('');
+  const [start, SetStart] = useState('');
+  const [finish, SetFinish] = useState('');
+  const [active, setActive] = useState(false);
+  const [data, SetData] = useState([]);
+  const [load, SetLoad] = useState(false);
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const showModal = () => {
-      setIsModalOpen(true);
-    };
-    const handleOk = () => {
+  const token = localStorage.getItem('access_token');
+
+  const resetForm = () => {
+    setEditMode(false);
+    setCurrentDiscount(null);
+    SetDisc('');
+    SetStart('');
+    SetFinish('');
+    setActive(false);
+  };
+
+  const showModal = () => {
+    resetForm(); // Clear form before opening
+    setIsModalOpen(true);
+  };
+
+  const handleOk = async () => {
+    const url = editMode
+      ? `https://back.ifly.com.uz/api/discount/${currentDiscount?.id}`
+      : 'https://back.ifly.com.uz/api/discount';
+    const method = editMode ? 'patch' : 'post';
+
+    try {
+      const res = await axios[method](url, {
+        discount: disc,
+        started_at: start,
+        finished_at: finish,
+        status: active,
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      toast.success(res?.statusText || 'Success');
+      getDiscount();
       setIsModalOpen(false);
-    };
-    const handleCancel = () => {
-      setIsModalOpen(false);
-    };
-
-
-    // get api
-    const [data, SetData] = useState()
-    const [load, SetLoad] = useState(false)
-
-    const getDiscount = async () => {
-      try {
-        SetLoad(true)
-        const res = await axios.get("https://back.ifly.com.uz/api/discount")
-
-        SetData(res?.data?.data)
-      }
-      catch (error) {
-        console.log(error);
-      }
-      finally {
-        SetLoad(false)
-      }
+      resetForm();
+    } catch (error) {
+      toast.error(error?.response?.data?.message?.message || 'Error');
     }
+  };
 
-    useEffect(() => {
-      getDiscount()
-    }, [])
+  const handleCancel = () => {
+    setIsModalOpen(false);
+    resetForm();
+  };
 
-
-    // post api
-    const [disc, SetDisc] = useState()
-    const [start, SetStart] = useState()
-    const [finish, SetFinish] = useState()
-    const [active, setActive] = useState(false)
-    const token = localStorage.getItem("access_token")
-
-    const createDiscount = async () => {
-      try {
-        const res = await axios.post("https://back.ifly.com.uz/api/discount", { discount: disc, started_at: start, finished_at: finish, status: active },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`
-            }
-          }
-        )
-
-        handleOk()
-        getDiscount()
-        toast.success(res?.statusText)
-      }
-      catch (error) {
-        toast.error(error?.response?.data?.message?.message)
-      }
+  const getDiscount = async () => {
+    try {
+      SetLoad(true);
+      const res = await axios.get('https://back.ifly.com.uz/api/discount');
+      SetData(res?.data?.data || []);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      SetLoad(false);
     }
+  };
 
-    // delete api
+  useEffect(() => {
+    getDiscount();
+  }, []);
 
-    const deleteDiscount = async (id) => {
-      try {
-        const res = await axios.delete(`https://back.ifly.com.uz/api/discount/${id}`,
-          {
-            headers: {
-              "Authorization": `Bearer ${token}`
-            }
-          }
-        )
-        console.log(res);
-        getDiscount()
-        toast.success(`Discount with ID ${id} has been deleted successfully`)
-      }
-      catch (error) {
-        toast.error(error?.response?.data?.message)
-      }
+  const deleteDiscount = async (id) => {
+    try {
+      await axios.delete(`https://back.ifly.com.uz/api/discount/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      toast.success(`Deleted successfully`);
+      getDiscount();
+    } catch (error) {
+      toast.error(error?.response?.data?.message || 'Delete error');
     }
+  };
 
-    return (
-      <>
-        {
-          load ? (<div className='flex items-center justify-center translate-y-[220%]'><Flex align="center" gap="middle"> <Spin size="large" /> </Flex></div>) : (<div className="p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold">Discount</h2>
-              <Button type="primary" onClick={showModal} style={{ backgroundColor: '#00C951', borderColor: '#00C951' }}>
-                Add Discount
-              </Button>
-              <Modal title="Add Discount" open={isModalOpen} onOk={createDiscount} onCancel={handleCancel}>
-                <form action="">
-                  <div className='mb-2'>
-                    <label className='font-semibold' htmlFor="">Discount %</label>
-                    <Input type='number' onChange={(e) => SetDisc(Number(e.target.value))} placeholder="Discount %" />
-                  </div>
-                  <div className='mb-2'>
-                    <label className='font-semibold' htmlFor="">Started</label>
-                    <Input type='date' onChange={(e) => SetStart(e.target.value)} placeholder="Russian name" />
-                  </div>
-                  <div className='mb-2'>
-                    <label className='font-semibold' htmlFor="">Finished</label>
-                    <Input type='date' onChange={(e) => SetFinish(e.target.value)} placeholder="German name" />
-                  </div>
-                  <div className='mb-2 flex items-center gap-2'>
-                    <label className='font-semibold' htmlFor="">Active</label>
-                    <Checkbox onChange={(e) => setActive(e.target.checked)} />
-                  </div>
-                </form>
-              </Modal>
-            </div>
+  const editDiscount = (item) => {
+    setCurrentDiscount(item);
+    SetDisc(item?.discount);
+    SetStart(item?.started_at);
+    SetFinish(item?.finished_at);
+    setActive(item?.status);
+    setEditMode(true);
+    setIsModalOpen(true);
+  };
 
-            <div className="overflow-x-auto">
-              {data?.length === 0 ? (
-                <div className="flex items-center justify-center h-64">
-                  <Empty description="No sizes available" />
+  return (
+    <>
+      {load ? (
+        <div className='flex items-center justify-center translate-y-[220%]'>
+          <Flex align='center' gap='middle'>
+            <Spin size='large' />
+          </Flex>
+        </div>
+      ) : (
+        <div className='p-6'>
+          <div className='flex justify-between items-center mb-4'>
+            <h2 className='text-2xl font-bold'>Discount</h2>
+            <Button
+              type='primary'
+              onClick={showModal}
+              style={{ backgroundColor: '#00C951', borderColor: '#00C951' }}
+            >
+              Add Discount
+            </Button>
+            <Modal
+              title={editMode ? 'Edit Discount' : 'Add Discount'}
+              open={isModalOpen}
+              onOk={handleOk}
+              onCancel={handleCancel}
+            >
+              <form>
+                <div className='mb-2'>
+                  <label className='font-semibold'>Discount %</label>
+                  <Input
+                    type='number'
+                    value={disc}
+                    onChange={(e) => SetDisc(Number(e.target.value))}
+                    placeholder='Discount %'
+                  />
                 </div>
-              ): (<table className="min-w-full bg-white border border-gray-300">
+                <div className='mb-2'>
+                  <label className='font-semibold'>Started</label>
+                  <Input
+                    type='date'
+                    value={start}
+                    onChange={(e) => SetStart(e.target.value)}
+                    placeholder='Start date'
+                  />
+                </div>
+                <div className='mb-2'>
+                  <label className='font-semibold'>Finished</label>
+                  <Input
+                    type='date'
+                    value={finish}
+                    onChange={(e) => SetFinish(e.target.value)}
+                    placeholder='Finish date'
+                  />
+                </div>
+                <div className='mb-2 flex items-center gap-2'>
+                  <label className='font-semibold'>Active</label>
+                  <Checkbox
+                    checked={active}
+                    onChange={(e) => setActive(e.target.checked)}
+                  />
+                </div>
+              </form>
+            </Modal>
+          </div>
+
+          <div className='overflow-x-auto'>
+            {data?.length === 0 ? (
+              <div className='flex items-center justify-center h-64'>
+                <Empty description='No discounts available' />
+              </div>
+            ) : (
+              <table className='min-w-full bg-white border border-gray-300'>
                 <thead>
-                  <tr className="bg-gray-200 text-gray-700">
-                    <th className="py-2 font-normal px-4 border border-gray-300">№</th>
-                    <th className="py-2 font-normal px-4 border border-gray-300">Discount (%)</th>
-                    <th className="py-2 font-normal px-4 border border-gray-300">Created Date</th>
-                    <th className="py-2 font-normal px-4 border border-gray-300">Finished Date</th>
-                    <th className="py-2 font-normal px-4 border border-gray-300">Status</th>
-                    <th className="py-2 font-normal px-4 border border-gray-300">Actions</th>
+                  <tr className='bg-gray-200 text-gray-700'>
+                    <th className='py-2 font-normal px-4 border border-gray-300 font-normal'>№</th>
+                    <th className='py-2 font-normal px-4 border border-gray-300 font-normal'>Discount (%)</th>
+                    <th className='py-2 font-normal px-4 border border-gray-300 font-normal'>Started</th>
+                    <th className='py-2 font-normal px-4 border border-gray-300 font-normal'>Finished</th>
+                    <th className='py-2 font-normal px-4 border border-gray-300 font-normal'>Status</th>
+                    <th className='py-2 font-normal px-4 border border-gray-300 font-normal'>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {
-                    data?.map((item, index) => (
-                      <tr key={index} className="text-center">
-                        <td className="py-2 font-normal px-4 border border-gray-300">{index + 1}</td>
-                        <td className="py-2 font-normal px-4 border border-gray-300">{item?.discount}%</td>
-                        <td className="py-2 font-normal px-4 border border-gray-300">{item?.started_at}</td>
-                        <td className="py-2 font-normal px-4 border border-gray-300">{item?.finished_at}</td>
-                        <td className="py-2 font-normal px-4 border border-gray-300">
-                          <span className={item?.status ? "text-green-500" : "text-red-500"}>
-                            {item?.status ? "Active" : "Inactive"}
-                          </span>
-                        </td>
-
-                        <td className="py-2 font-normal px-4 border border-gray-300 space-x-2">
-                          <button className="bg-yellow-400 hover:bg-yellow-500 text-white font-normal py-1 px-3 rounded">
-                            Edit
-                          </button>
-                          <button onClick={() => deleteDiscount(item?.id)} className="bg-red-500 hover:bg-red-600 text-white font-normal py-1 px-3 rounded">
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  }
+                  {data?.map((item, index) => (
+                    <tr key={item?.id} className='text-center'>
+                      <td className='py-2 px-4 border border-gray-300 font-normal'>{index + 1}</td>
+                      <td className='py-2 px-4 border border-gray-300 font-normal'>{item?.discount}%</td>
+                      <td className='py-2 px-4 border border-gray-300 font-normal'>{item?.started_at}</td>
+                      <td className='py-2 px-4 border border-gray-300 font-normal'>{item?.finished_at}</td>
+                      <td className='py-2 px-4 border border-gray-300 font-normal'>
+                        <span className={item?.status ? 'text-green-500' : 'text-red-500'}>
+                          {item?.status ? 'Active' : 'Inactive'}
+                        </span>
+                      </td>
+                      <td className='py-2 px-4 border border-gray-300 space-x-2'>
+                        <button
+                          onClick={() => editDiscount(item)}
+                          className='bg-yellow-400 hover:bg-yellow-500 text-white py-1 px-3 rounded'
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => deleteDiscount(item?.id)}
+                          className='bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded'
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
-              </table>)}
-            </div>
-          </div>)
-        }
-      </>
-    );
-  };
+              </table>
+            )}
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
 
-  export default Discount;
+export default Discount;

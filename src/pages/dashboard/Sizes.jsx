@@ -5,25 +5,22 @@ import toast from 'react-hot-toast';
 
 const Sizes = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const showModal = () => setIsModalOpen(true);
-  const handleOk = () => setIsModalOpen(false);
-  const handleCancel = () => setIsModalOpen(false);
-
-  // get api
-  const [data, SetData] = useState();
-  const [load, SetLoad] = useState(false);
-  console.log(data);
-  
+  const [editMode, setEditMode] = useState(false);
+  const [currentSizeId, setCurrentSizeId] = useState(null);
+  const [sizes, setSizes] = useState('');
+  const [data, setData] = useState([]);
+  const [load, setLoad] = useState(false);
+  const token = localStorage.getItem("access_token");
 
   const getSize = async () => {
     try {
-      SetLoad(true);
+      setLoad(true);
       const res = await axios.get("https://back.ifly.com.uz/api/sizes");
-      SetData(res?.data?.data);
+      setData(res?.data?.data || []);
     } catch (error) {
       console.log(error);
     } finally {
-      SetLoad(false);
+      setLoad(false);
     }
   };
 
@@ -31,14 +28,36 @@ const Sizes = () => {
     getSize();
   }, []);
 
-  // post api
-  const [sizes, SetSizes] = useState();
-  const token = localStorage.getItem("access_token");
+  const showAddModal = () => {
+    setSizes('');
+    setEditMode(false);
+    setCurrentSizeId(null);
+    setIsModalOpen(true);
+  };
 
-  const createSize = async () => {
+  const showEditModal = (item) => {
+    setEditMode(true);
+    setCurrentSizeId(item?.id);
+    setSizes(item?.size);
+    setIsModalOpen(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+    setEditMode(false);
+    setCurrentSizeId(null);
+    setSizes('');
+  };
+
+  const createOrUpdateSize = async () => {
+    const url = editMode
+      ? `https://back.ifly.com.uz/api/sizes/${currentSizeId}`
+      : `https://back.ifly.com.uz/api/sizes`;
+    const method = editMode ? 'patch' : 'post';
+
     try {
-      const res = await axios.post(
-        "https://back.ifly.com.uz/api/sizes",
+      const res = await axios[method](
+        url,
         { size: sizes },
         {
           headers: {
@@ -47,31 +66,27 @@ const Sizes = () => {
           },
         }
       );
-
-      handleOk();
+      toast.success(editMode ? "Size updated" : "Size created");
+      handleCancel();
       getSize();
-      toast.success(res?.statusText);
     } catch (error) {
       console.log(error);
       toast.error("Error");
     }
   };
 
-  // delete api
   const deleteSize = async (id) => {
     try {
-      const res = await axios.delete(
+      await axios.delete(
         `https://back.ifly.com.uz/api/sizes/${id}`,
         {
-          headers: {
-            "Authorization": `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
+      toast.success(`Size with ID ${id} has been deleted`);
       getSize();
-      toast.success("Deleted");
     } catch (error) {
-      toast.error("Error");
+      toast.error(error?.response?.data?.message || "Delete failed");
     }
   };
 
@@ -87,25 +102,26 @@ const Sizes = () => {
             <h2 className="text-2xl font-bold">Sizes</h2>
             <Button
               type="primary"
-              onClick={showModal}
+              onClick={showAddModal}
               style={{ backgroundColor: '#00C951', borderColor: '#00C951' }}
             >
               Add Size
             </Button>
             <Modal
-              title="Add Size"
+              title={editMode ? "Edit Size" : "Add Size"}
               open={isModalOpen}
-              onOk={createSize}
+              onOk={createOrUpdateSize}
               onCancel={handleCancel}
             >
-              <form>
+              <form onSubmit={(e) => { e.preventDefault(); createOrUpdateSize(); }}>
                 <div className="mb-2">
                   <label className="font-semibold" htmlFor="size">
                     Size
                   </label>
                   <Input
                     id="size"
-                    onChange={(e) => SetSizes(e.target.value)}
+                    value={sizes}
+                    onChange={(e) => setSizes(e.target.value)}
                     placeholder="Enter size"
                   />
                 </div>
@@ -133,7 +149,10 @@ const Sizes = () => {
                       <td className="py-2 font-normal px-4 border border-gray-300">{index + 1}</td>
                       <td className="py-2 font-normal px-4 border border-gray-300">{item?.size}</td>
                       <td className="py-2 font-normal px-4 border border-gray-300 space-x-2">
-                        <button className="bg-yellow-400 hover:bg-yellow-500 text-white font-normal py-1 px-3 rounded">
+                        <button
+                          onClick={() => showEditModal(item)}
+                          className="bg-yellow-400 hover:bg-yellow-500 text-white font-normal py-1 px-3 rounded"
+                        >
                           Edit
                         </button>
                         <button
