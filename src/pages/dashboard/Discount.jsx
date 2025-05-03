@@ -197,13 +197,13 @@ const Discount = () => {
                       <td className='py-2 px-4 border border-gray-300 space-x-2'>
                         <button
                           onClick={() => editDiscount(item)}
-                          className='bg-yellow-400 hover:bg-yellow-500 text-white py-1 px-3 rounded'
+                          className='bg-yellow-400 font-normal hover:bg-yellow-500 text-white py-1 px-3 rounded'
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => deleteDiscount(item?.id)}
-                          className='bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded'
+                          className='bg-red-500 font-normal hover:bg-red-600 text-white py-1 px-3 rounded'
                         >
                           Delete
                         </button>
