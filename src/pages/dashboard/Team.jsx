@@ -130,27 +130,32 @@ const Team = () => {
               onOk={handleOk}
               onCancel={handleCancel}
             >
-              <form className='space-y-2'>
+              <form className='space-y-2 pt mt-3'>
+                <label htmlFor="">Full name</label>
                 <Input
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder='Full Name'
                 />
+                <label htmlFor="">Position EN</label>
                 <Input
                   value={positionEn}
                   onChange={(e) => setPositionEn(e.target.value)}
                   placeholder='Position EN'
                 />
+                <label htmlFor="">Position RU</label>
                 <Input
                   value={positionRu}
                   onChange={(e) => setPositionRu(e.target.value)}
                   placeholder='Position RU'
                 />
+                <label htmlFor="">Position DE</label>
                 <Input
                   value={positionDe}
                   onChange={(e) => setPositionDe(e.target.value)}
                   placeholder='Position DE'
                 />
+                <label htmlFor="">Image URL</label>
                 <Input
                   value={image}
                   onChange={(e) => setImage(e.target.value)}
