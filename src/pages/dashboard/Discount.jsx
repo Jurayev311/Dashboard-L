@@ -26,7 +26,7 @@ const Discount = () => {
   };
 
   const showModal = () => {
-    resetForm(); // Clear form before opening
+    resetForm();
     setIsModalOpen(true);
   };
 
@@ -174,12 +174,12 @@ const Discount = () => {
               <table className='min-w-full bg-white border border-gray-300'>
                 <thead>
                   <tr className='bg-gray-200 text-gray-700'>
-                    <th className='py-2 font-normal px-4 border border-gray-300 font-normal'>№</th>
-                    <th className='py-2 font-normal px-4 border border-gray-300 font-normal'>Discount (%)</th>
-                    <th className='py-2 font-normal px-4 border border-gray-300 font-normal'>Started</th>
-                    <th className='py-2 font-normal px-4 border border-gray-300 font-normal'>Finished</th>
-                    <th className='py-2 font-normal px-4 border border-gray-300 font-normal'>Status</th>
-                    <th className='py-2 font-normal px-4 border border-gray-300 font-normal'>Actions</th>
+                    <th className='py-2 font-normal px-4 border border-gray-300'>№</th>
+                    <th className='py-2 font-normal px-4 border border-gray-300'>Discount (%)</th>
+                    <th className='py-2 font-normal px-4 border border-gray-300'>Started</th>
+                    <th className='py-2 font-normal px-4 border border-gray-300'>Finished</th> 
+                    <th className='py-2 font-normal px-4 border border-gray-300'>Status</th>
+                    <th className='py-2 font-normal px-4 border border-gray-300'>Actions</th>
                   </tr>
                 </thead>
                 <tbody>

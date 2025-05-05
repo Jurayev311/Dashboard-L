@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import logo from '../../assets/logo.png'
+import logo from '../../assets/logo.png';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -11,12 +11,14 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="flex min-h-screen overflow-hidden">
-      <aside className="w-[286px] bg-[#1E2939] text-white p-6 flex flex-col min-h-screen">
+    <div className="flex h-screen overflow-hidden"> {/* 1. Butun ekran balandligi */}
+      
+      {/* Sidebar - scroll bo'lmaydi */}
+      <aside className="w-[286px] bg-[#1E2939] text-white p-6 flex flex-col">
         <div className="flex items-center justify-center mb-8">
           <img className='w-[80px] h-[80px]' src={logo} alt="logo image" />
         </div>
-        <nav className="flex-1">
+        <nav className="flex-1 overflow-y-auto pr-2">
           <ul className='text-center leading-5'>
             <li className="mt-1.5">
               <NavLink
@@ -113,20 +115,21 @@ const Dashboard = () => {
         </nav>
       </aside>
 
-      <main className="flex-1 bg-gray-100 p-6 overflow-auto">
+      {/* Main - faqat shu qism scroll bo'ladi */}
+      <main className="flex-1 h-screen overflow-y-auto bg-gray-100 p-6">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-semibold">Dashboard</h2>
           <button
-          onClick={handleDelete}
-          className="mt-auto py-1.5 px-3.5 bg-red-500 text-white rounded-lg hover:bg-red-600"
-        >
-          Log Out
-        </button>
+            onClick={handleDelete}
+            className="mt-auto py-1.5 px-3.5 bg-red-500 text-white rounded-lg hover:bg-red-600"
+          >
+            Log Out
+          </button>
         </div>
         <div className="flex items-center justify-center">
           <div className='bg-white w-full min-h-[200px] shadow-md rounded-md'>
-          <p className="text-lg p-2.5 font-bold text-black">
-            <Outlet />
+            <p className="text-lg p-2.5 font-bold text-black">
+              <Outlet />
             </p>
           </div>
         </div>
