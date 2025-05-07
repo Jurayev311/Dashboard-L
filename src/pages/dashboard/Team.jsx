@@ -38,19 +38,26 @@ const Team = () => {
       : 'https://back.ifly.com.uz/api/team-section';
     const method = editMode ? 'patch' : 'post';
 
+    const formData = new FormData();
+    formData.append('full_name', fullName);
+    formData.append('position_en', positionEn);
+    formData.append('position_ru', positionRu);
+    formData.append('position_de', positionDe);
+    formData.append('image', image); // Rasmni FormData orqali yuborish
+
     try {
-      const res = await axios[method](url, {
-        full_name: fullName,
-        position_en: positionEn,
-        position_ru: positionRu,
-        position_de: positionDe,
-        image,
-      }, {
+      const res = await axios[method](url, formData, {
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,
         },
       });
+
+      // Rasm URL manzilini olish va to‘g‘ri shaklda ko‘rsatish
+      const imageUrl = res?.data?.image_url || res?.data?.image;
+      const imagePath = imageUrl ? `https://back.ifly.com.uz/${imageUrl}` : '';
+
+      setImage(imagePath); // To‘g‘ri rasm URL manzili bilan yangilash
 
       toast.success(res?.statusText || 'Success');
       fetchTeam();
@@ -155,11 +162,10 @@ const Team = () => {
                   onChange={(e) => setPositionDe(e.target.value)}
                   placeholder='Position DE'
                 />
-                <label htmlFor="">Image URL</label>
+                <label htmlFor="">Image</label>
                 <Input
-                  value={image}
-                  onChange={(e) => setImage(e.target.value)}
-                  placeholder='Image URL'
+                  type='file'
+                  onChange={(e) => setImage(e.target.files[0])} // Faqat rasm faylini tanlash
                 />
               </form>
             </Modal>
@@ -188,7 +194,11 @@ const Team = () => {
                     <tr key={item?.id} className='text-center'>
                       <td className='py-2 px-4 border border-gray-300 font-normal'>{index + 1}</td>
                       <td className='py-2 px-4 border border-gray-300 font-normal'>
-                        <img src={item?.image} alt='team' className='w-12 h-12 rounded-full mx-auto object-cover' />
+                        <img
+                          src={item?.image ? `https://back.ifly.com.uz/${item?.image}` : 'default-image-url'}
+                          alt='team'
+                          className='w-12 h-12 rounded-full mx-auto object-cover'
+                        />
                       </td>
                       <td className='py-2 px-4 border border-gray-300 font-normal'>{item?.full_name}</td>
                       <td className='py-2 px-4 border border-gray-300 font-normal'>{item?.position_en}</td>
