@@ -157,7 +157,7 @@ const Products = () => {
                   {data?.map((item, index) => (
                     <tr key={index} className="text-center">
                       <td className="py-2 font-normal px-4 border border-gray-300">{index + 1}</td>
-                      <div className='flex items-center justify-center p-1'><img src={`https://back.ifly.com.uz/${item?.images}`} alt={item?.title_en} className="w-16 h-16 object-cover"/></div>
+                     <td className="py-2 font-normal px-4 border border-gray-300"> <div className='flex items-center justify-center p-1 border-gray-300'><img src={`https://back.ifly.com.uz/${item?.images}`} alt={item?.title_en} className="w-16 h-16 object-cover"/></div></td>
                       <td className="py-2 font-normal px-4 border border-gray-300">{item?.title_en}</td>
                       <td className="py-2 font-normal px-4 border border-gray-300">{item?.description_en}</td>
                       <td className="py-2 font-normal px-4 border border-gray-300">{item?.price}</td>
