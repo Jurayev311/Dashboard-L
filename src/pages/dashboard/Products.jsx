@@ -11,6 +11,17 @@ const Products = () => {
   const [data, setData] = useState([]);
   const [load, setLoad] = useState(false);
   const token = localStorage.getItem("access_token");
+  const [form, setForm] = useState({
+    title: '',
+    description: '',
+    price: '',
+    category_id: '',
+    color: '',
+    size: '',
+    discount: '',
+    materials: '',
+    image: '',
+  });
 
   console.log(data);
 
@@ -114,18 +125,19 @@ const Products = () => {
               open={isModalOpen}
               onOk={createOrUpdateProduct}
               onCancel={handleCancel}
+              okText={editMode ? "Update" : "Create"}
             >
-              <form onSubmit={(e) => { e.preventDefault(); createOrUpdateProduct(); }}>
-                <div className="mb-2">
-                  <label className="font-semibold" htmlFor="size">
-                    Size
-                  </label>
-                  <Input
-                    id="size"
-                    value={sizes}
-                    onChange={(e) => setSizes(e.target.value)}
-                    placeholder="Enter size"
-                  />
+              <form onSubmit={(e) => e.preventDefault()}>
+                <div className="grid grid-cols-2 gap-4">
+                  <Input placeholder="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+                  <Input placeholder="Description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+                  <Input placeholder="Price" type="number" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
+                  <Input placeholder="Category ID" value={form.category_id} onChange={(e) => setForm({ ...form, category_id: e.target.value })} />
+                  <Input placeholder="Color" value={form.color} onChange={(e) => setForm({ ...form, color: e.target.value })} />
+                  <Input placeholder="Size" value={form.size} onChange={(e) => setForm({ ...form, size: e.target.value })} />
+                  <Input placeholder="Discount (%)" type="number" value={form.discount} onChange={(e) => setForm({ ...form, discount: e.target.value })} />
+                  <Input placeholder="Materials" value={form.materials} onChange={(e) => setForm({ ...form, materials: e.target.value })} />
+                  <Input placeholder="Image URL" value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} />
                 </div>
               </form>
             </Modal>
