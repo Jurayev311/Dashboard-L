@@ -13,12 +13,12 @@ const Products = () => {
   const token = localStorage.getItem("access_token");
 
   console.log(data);
-  
+
   const getProduct = async () => {
     try {
       setLoad(true);
       const res = await axios.get("https://back.ifly.com.uz/api/product");
-      setData(res?.data?.data?.products || []);      
+      setData(res?.data?.data?.products || []);
     } catch (error) {
       console.log(error);
     } finally {
@@ -157,7 +157,7 @@ const Products = () => {
                   {data?.map((item, index) => (
                     <tr key={index} className="text-center">
                       <td className="py-2 font-normal px-4 border border-gray-300">{index + 1}</td>
-                     <td className="py-2 font-normal px-4 border border-gray-300"> <div className='flex items-center justify-center p-1 border-gray-300'><img src={`https://back.ifly.com.uz/${item?.images}`} alt={item?.title_en} className="w-16 h-16 object-cover rounded"/></div></td>
+                      <td className="py-2 font-normal px-4 border border-gray-300"> <div className='flex items-center justify-center p-1 border-gray-300'><img src={`https://back.ifly.com.uz/${item?.images}`} alt={item?.title_en} className="w-16 h-16 object-cover rounded" /></div></td>
                       <td className="py-2 font-normal px-4 border border-gray-300">{item?.title_en}</td>
                       <td className="py-2 font-normal px-4 border border-gray-300">{item?.description_en}</td>
                       <td className="py-2 font-normal px-4 border border-gray-300">{item?.price}</td>
@@ -166,20 +166,23 @@ const Products = () => {
                       <td className="py-2 font-normal px-4 border border-gray-300">{item?.sizes[0]?.size}</td>
                       <td className="py-2 font-normal px-4 border border-gray-300">{item?.discount?.discount}</td>
                       <td className="py-2 font-normal px-4 border border-gray-300">{item?.materials?.sq}</td>
-                      <td className="py-2 font-normal px-4 border border-gray-300 space-x-2">
-                        <button
-                          onClick={() => showEditModal(item)}
-                          className="bg-yellow-400 hover:bg-yellow-500 text-white font-normal py-1 px-3 rounded"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => deleteProduct(item?.id)}
-                          className="bg-red-500 hover:bg-red-600 text-white font-normal py-1 px-3 rounded"
-                        >
-                          Delete
-                        </button>
+                      <td className="py-2 font-normal px-4 border border-gray-300">
+                        <div className="flex flex-wrap justify-center items-center gap-2 min-w-[130px]">
+                          <button
+                            onClick={() => showEditModal(item)}
+                            className="bg-yellow-400 hover:bg-yellow-500 text-white font-normal py-1 px-3 rounded text-sm whitespace-nowrap"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => deleteProduct(item?.id)}
+                            className="bg-red-500 hover:bg-red-600 text-white font-normal py-1 px-3 rounded text-sm whitespace-nowrap"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </td>
+
                     </tr>
                   ))}
                 </tbody>
