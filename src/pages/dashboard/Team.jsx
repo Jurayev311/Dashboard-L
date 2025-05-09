@@ -34,8 +34,8 @@ const Team = () => {
 
   const handleOk = async () => {
     const url = editMode
-      ? `https://back.ifly.com.uz/api/team-section/${currentMember?.id}`
-      : 'https://back.ifly.com.uz/api/team-section';
+      ? `https://testaoron.limsa.uz/api/team-section/${currentMember?.id}`
+      : 'https://testaoron.limsa.uz/api/team-section';
     const method = editMode ? 'patch' : 'post';
 
     const formData = new FormData();
@@ -43,7 +43,7 @@ const Team = () => {
     formData.append('position_en', positionEn);
     formData.append('position_ru', positionRu);
     formData.append('position_de', positionDe);
-    formData.append('image', image); // Rasmni FormData orqali yuborish
+    formData.append('image', image);
 
     try {
       const res = await axios[method](url, formData, {
@@ -53,11 +53,10 @@ const Team = () => {
         },
       });
 
-      // Rasm URL manzilini olish va to‘g‘ri shaklda ko‘rsatish
       const imageUrl = res?.data?.image_url || res?.data?.image;
-      const imagePath = imageUrl ? `https://back.ifly.com.uz/${imageUrl}` : '';
+      const imagePath = imageUrl ? `https://testaoron.limsa.uz/${imageUrl}` : '';
 
-      setImage(imagePath); // To‘g‘ri rasm URL manzili bilan yangilash
+      setImage(imagePath); 
 
       toast.success(res?.statusText || 'Success');
       fetchTeam();
@@ -76,7 +75,7 @@ const Team = () => {
   const fetchTeam = async () => {
     try {
       setLoad(true);
-      const res = await axios.get('https://back.ifly.com.uz/api/team-section');
+      const res = await axios.get('https://testaoron.limsa.uz/api/team-section');
       setData(res?.data?.data || []);
     } catch (error) {
       console.log(error);
@@ -91,7 +90,7 @@ const Team = () => {
 
   const deleteMember = async (id) => {
     try {
-      await axios.delete(`https://back.ifly.com.uz/api/team-section/${id}`, {
+      await axios.delete(`https://testaoron.limsa.uz/api/team-section/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       toast.success('Deleted successfully');
@@ -165,7 +164,7 @@ const Team = () => {
                 <label htmlFor="">Image</label>
                 <Input
                   type='file'
-                  onChange={(e) => setImage(e.target.files[0])} // Faqat rasm faylini tanlash
+                  onChange={(e) => setImage(e.target.files[0])}
                 />
               </form>
             </Modal>
@@ -195,7 +194,7 @@ const Team = () => {
                       <td className='py-2 px-4 border border-gray-300 font-normal'>{index + 1}</td>
                       <td className='py-2 px-4 border border-gray-300 font-normal'>
                         <img
-                          src={item?.image ? `https://back.ifly.com.uz/${item?.image}` : 'default-image-url'}
+                          src={item?.image ? `https://testaoron.limsa.uz/${item?.image}` : 'default-image-url'}
                           alt='team'
                           className='w-12 h-12 rounded-full mx-auto object-cover'
                         />

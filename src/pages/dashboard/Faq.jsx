@@ -21,7 +21,7 @@ const Faq = () => {
   const getFaq = async () => {
     try {
       SetLoad(true);
-      const res = await axios.get("https://back.ifly.com.uz/api/faq");
+      const res = await axios.get("https://testaoron.limsa.uz/api/faq");
       SetData(res?.data?.data);
     } catch (error) {
       console.log(error);
@@ -62,7 +62,7 @@ const Faq = () => {
   const createFaq = async () => {
     try {
       const res = await axios.post(
-        "https://back.ifly.com.uz/api/faq",
+        "https://testaoron.limsa.uz/api/faq",
         {
           question_en: question,
           answer_en: answer,
@@ -91,7 +91,7 @@ const Faq = () => {
   const updateFaq = async () => {
     try {
       const res = await axios.patch(
-        `https://back.ifly.com.uz/api/faq/${editId}`,
+        `https://testaoron.limsa.uz/api/faq/${editId}`,
         {
           question_en: question,
           answer_en: answer,
@@ -120,7 +120,7 @@ const Faq = () => {
 
   const deleteFaq = async (id) => {
     try {
-      await axios.delete(`https://back.ifly.com.uz/api/faq/${id}`, {
+      await axios.delete(`https://testaoron.limsa.uz/api/faq/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

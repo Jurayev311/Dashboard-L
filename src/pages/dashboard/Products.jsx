@@ -28,7 +28,7 @@ const Products = () => {
   const getProduct = async () => {
     try {
       setLoad(true);
-      const res = await axios.get("https://back.ifly.com.uz/api/product");
+      const res = await axios.get("https://testaoron.limsa.uz/api/product");
       setData(res?.data?.data?.products || []);
     } catch (error) {
       console.log(error);
@@ -64,8 +64,8 @@ const Products = () => {
 
   const createOrUpdateProduct = async () => {
     const url = editMode
-      ? `https://back.ifly.com.uz/api/product/${currentSizeId}`
-      : `https://back.ifly.com.uz/api/product`;
+      ? `https://testaoron.limsa.uz/api/product/${currentSizeId}`
+      : `https://testaoron.limsa.uz/api/product`;
     const method = editMode ? 'patch' : 'post';
 
     try {
@@ -91,7 +91,7 @@ const Products = () => {
   const deleteProduct = async (id) => {
     try {
       await axios.delete(
-        `https://back.ifly.com.uz/api/product/${id}`,
+        `https://testaoron.limsa.uz/api/product/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -169,7 +169,7 @@ const Products = () => {
                   {data?.map((item, index) => (
                     <tr key={index} className="text-center">
                       <td className="py-2 font-normal px-4 border border-gray-300">{index + 1}</td>
-                      <td className="py-2 font-normal px-4 border border-gray-300"> <div className='flex items-center justify-center p-1 border-gray-300'><img src={`https://back.ifly.com.uz/${item?.images}`} alt={item?.title_en} className="w-16 h-16 object-cover rounded" /></div></td>
+                      <td className="py-2 font-normal px-4 border border-gray-300"> <div className='flex items-center justify-center p-1 border-gray-300'><img src={`https://testaoron.limsa.uz/${item?.images}`} alt={item?.title_en} className="w-16 h-16 object-cover rounded" /></div></td>
                       <td className="py-2 font-normal px-4 border border-gray-300">{item?.title_en}</td>
                       <td className="py-2 font-normal px-4 border border-gray-300">{item?.description_en}</td>
                       <td className="py-2 font-normal px-4 border border-gray-300">{item?.price}</td>

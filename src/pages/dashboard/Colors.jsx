@@ -20,7 +20,7 @@ const Colors = () => {
   const getColors = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("https://back.ifly.com.uz/api/colors");
+      const res = await axios.get("https://testaoron.limsa.uz/api/colors");
       setData(res?.data?.data || []);
     } catch (error) {
       console.log(error);
@@ -56,8 +56,8 @@ const Colors = () => {
     };
 
     const url = isEditing
-      ? `https://back.ifly.com.uz/api/colors/${editId}`
-      : `https://back.ifly.com.uz/api/colors`;
+      ? `https://testaoron.limsa.uz/api/colors/${editId}`
+      : `https://testaoron.limsa.uz/api/colors`;
 
     const method = isEditing ? 'patch' : 'post';
 
@@ -92,7 +92,7 @@ const Colors = () => {
 
   const deleteColor = async (id) => {
     try {
-      await axios.delete(`https://back.ifly.com.uz/api/colors/${id}`, {
+      await axios.delete(`https://testaoron.limsa.uz/api/colors/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       toast.success("Deleted");

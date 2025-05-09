@@ -15,7 +15,7 @@ const Sizes = () => {
   const getSize = async () => {
     try {
       setLoad(true);
-      const res = await axios.get("https://back.ifly.com.uz/api/sizes");
+      const res = await axios.get("https://testaoron.limsa.uz/api/sizes");
       setData(res?.data?.data || []);
     } catch (error) {
       console.log(error);
@@ -51,8 +51,8 @@ const Sizes = () => {
 
   const createOrUpdateSize = async () => {
     const url = editMode
-      ? `https://back.ifly.com.uz/api/sizes/${currentSizeId}`
-      : `https://back.ifly.com.uz/api/sizes`;
+      ? `https://testaoron.limsa.uz/api/sizes/${currentSizeId}`
+      : `https://testaoron.limsa.uz/api/sizes`;
     const method = editMode ? 'patch' : 'post';
 
     try {
@@ -78,7 +78,7 @@ const Sizes = () => {
   const deleteSize = async (id) => {
     try {
       await axios.delete(
-        `https://back.ifly.com.uz/api/sizes/${id}`,
+        `https://testaoron.limsa.uz/api/sizes/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

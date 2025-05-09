@@ -38,8 +38,8 @@ const News = () => {
 
   const handleOk = async () => {
     const url = editMode
-      ? `https://back.ifly.com.uz/api/news/${currentMember?.id}`
-      : 'https://back.ifly.com.uz/api/news';
+      ? `https://testaoron.limsa.uz/api/news/${currentMember?.id}`
+      : 'https://testaoron.limsa.uz/api/news';
     const method = editMode ? 'patch' : 'post';
 
     const formData = new FormData();
@@ -76,7 +76,7 @@ const News = () => {
   const fetchNews = async () => {
     try {
       setLoad(true);
-      const res = await axios.get('https://back.ifly.com.uz/api/news');
+      const res = await axios.get('https://testaoron.limsa.uz/api/news');
       setData(res?.data?.data || []);
     } catch (error) {
       console.log(error);
@@ -91,7 +91,7 @@ const News = () => {
 
   const deleteNews = async (id) => {
     try {
-      await axios.delete(`https://back.ifly.com.uz/api/news/${id}`, {
+      await axios.delete(`https://testaoron.limsa.uz/api/news/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       toast.success('Deleted successfully');
@@ -179,7 +179,7 @@ const News = () => {
                 <label>Image</label>
                 <Input
                   type='file'
-                  onChange={(e) => setImage(e.target.files[0])} // Faqat rasm faylini tanlash
+                  onChange={(e) => setImage(e.target.files[0])} 
                 />
               </form>
             </Modal>
@@ -207,7 +207,7 @@ const News = () => {
                       <td className='py-2 px-4 border border-gray-300 font-normal'>{index + 1}</td>
                       <td className='py-2 px-4 border border-gray-300 font-normal'>
                         <img
-                          src={item?.image ? `https://back.ifly.com.uz/${item?.image}` : 'default-image-url'}
+                          src={item?.image ? `https://testaoron.limsa.uz/${item?.image}` : 'default-image-url'}
                           alt='news'
                           className='w-12 h-12 rounded-full mx-auto object-cover'
                         />

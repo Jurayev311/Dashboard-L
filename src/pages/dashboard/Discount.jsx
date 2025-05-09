@@ -32,8 +32,8 @@ const Discount = () => {
 
   const handleOk = async () => {
     const url = editMode
-      ? `https://back.ifly.com.uz/api/discount/${currentDiscount?.id}`
-      : 'https://back.ifly.com.uz/api/discount';
+      ? `https://testaoron.limsa.uz/api/discount/${currentDiscount?.id}`
+      : 'https://testaoron.limsa.uz/api/discount';
     const method = editMode ? 'patch' : 'post';
 
     try {
@@ -66,7 +66,7 @@ const Discount = () => {
   const getDiscount = async () => {
     try {
       SetLoad(true);
-      const res = await axios.get('https://back.ifly.com.uz/api/discount');
+      const res = await axios.get('https://testaoron.limsa.uz/api/discount');
       SetData(res?.data?.data || []);
     } catch (error) {
       console.log(error);
@@ -81,7 +81,7 @@ const Discount = () => {
 
   const deleteDiscount = async (id) => {
     try {
-      await axios.delete(`https://back.ifly.com.uz/api/discount/${id}`, {
+      await axios.delete(`https://testaoron.limsa.uz/api/discount/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       toast.success(`Deleted successfully`);

@@ -43,7 +43,7 @@ const Category = () => {
   const getCategory = async () => {
     try {
       SetLoad(true);
-      const res = await axios.get("https://back.ifly.com.uz/api/category");
+      const res = await axios.get("https://testaoron.limsa.uz/api/category");
       SetData(res?.data?.data);
     }
     catch (error) {
@@ -61,7 +61,7 @@ const Category = () => {
   // post api
   const createCategory = async () => {
     try {
-      const res = await axios.post("https://back.ifly.com.uz/api/category", {
+      const res = await axios.post("https://testaoron.limsa.uz/api/category", {
         name_en: nameEn,
         name_ru: nameRu,
         name_de: nameDe
@@ -87,7 +87,7 @@ const Category = () => {
   // delete api
   const deleteCategory = async (id) => {
     try {
-      const res = await axios.delete(`https://back.ifly.com.uz/api/category/${id}`,
+      const res = await axios.delete(`https://testaoron.limsa.uz/api/category/${id}`,
         {
           headers: {
             "Authorization": `Bearer ${token}`
@@ -115,7 +115,7 @@ const Category = () => {
   // edit patch
   const editCategory = async () => {
     try {
-      const res = await axios.patch(`https://back.ifly.com.uz/api/category/${editId}`, {
+      const res = await axios.patch(`https://testaoron.limsa.uz/api/category/${editId}`, {
         name_en: nameEn,
         name_ru: nameRu,
         name_de: nameDe

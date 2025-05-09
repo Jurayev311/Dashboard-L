@@ -20,7 +20,7 @@ const Contact = () => {
   const getContacts = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("https://back.ifly.com.uz/api/contact");
+      const res = await axios.get("https://testaoron.limsa.uz/api/contact");
       setData(res?.data?.data || []);
     } catch (err) {
       toast.error("Failed to fetch contacts");
@@ -59,7 +59,7 @@ const Contact = () => {
 
   const createContact = async () => {
     try {
-      await axios.post("https://back.ifly.com.uz/api/contact", {
+      await axios.post("https://testaoron.limsa.uz/api/contact", {
         phone_number: phone,
         email,
         address_en: addressEn,
@@ -81,7 +81,7 @@ const Contact = () => {
 
   const updateContact = async () => {
     try {
-      await axios.patch(`https://back.ifly.com.uz/api/contact/${editId}`, {
+      await axios.patch(`https://testaoron.limsa.uz/api/contact/${editId}`, {
         phone_number: phone,
         email,
         address_en: addressEn,
@@ -104,7 +104,7 @@ const Contact = () => {
 
   const deleteContact = async (id) => {
     try {
-      await axios.delete(`https://back.ifly.com.uz/api/contact/${id}`, {
+      await axios.delete(`https://testaoron.limsa.uz/api/contact/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         }

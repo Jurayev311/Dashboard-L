@@ -20,7 +20,7 @@ const Login = () => {
     const handleLogin = async () => {
         setLoading(true)
         try {
-            const response = await axios.post("https://back.ifly.com.uz/api/auth/login", {login, password}, 
+            const response = await axios.post("https://testaoron.limsa.uz/api/auth/login", {login, password}, 
                 {
                     headers: {
                         "Content-Type": "application/json"
