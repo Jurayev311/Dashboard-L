@@ -34,7 +34,7 @@ const Products = () => {
     discount_id: null,
     min_sell: 2,
     files: []
-  });
+  });  
 
   // Fetch products
   const getProduct = async () => {
@@ -231,6 +231,8 @@ const Products = () => {
       toast.error(error?.response?.data?.message || "Delete failed");
     }
   };
+  console.log(discounts);
+  
 
   return (
     <>
@@ -345,7 +347,7 @@ const Products = () => {
                   >
                     {discounts.map(discount => (
                       <Option key={discount.id} value={discount.id}>
-                        {discount.name || `ID: ${discount.id}`}
+                        {discount?.discount }
                       </Option>
                     ))}
                   </Select>
