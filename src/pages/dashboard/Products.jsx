@@ -14,19 +14,26 @@ const Products = () => {
   const [load, setLoad] = useState(false);
   const [fileList, setFileList] = useState([]);
   const [colors, setColors] = useState([]);
+  const [sizes, setSizes] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [discounts, setDiscounts] = useState([]); // Add discounts state
   const token = localStorage.getItem("access_token");
 
   const [form, setForm] = useState({
-    title: '',
-    description: '',
+    title_en: '',
+    title_ru: '',
+    title_de: '',
+    description_en: '',
+    description_ru: '',
+    description_de: '',
     price: '',
     category_id: '',
-    colors_id: [], // Changed from color to array
-    size: '',
-    discount_id: null, // Changed from discount to discount_id
-    materials: { cotton: '', wool: '' }, // Changed to object
-    min_sell: 2, // Added new required field
-    files: [] // Changed from image to array
+    sizes_id: [],
+    colors_id: [],
+    materials: { cotton: '', wool: '' },
+    discount_id: null,
+    min_sell: 2,
+    files: []
   });
 
   // Fetch products
@@ -52,21 +59,58 @@ const Products = () => {
     }
   };
 
+  // Fetch available sizes
+  const getSizes = async () => {
+    try {
+      const res = await axios.get("https://testaoron.limsa.uz/api/sizes");
+      setSizes(res?.data?.data || []);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Fetch available categories
+  const getCategories = async () => {
+    try {
+      const res = await axios.get("https://testaoron.limsa.uz/api/category");
+      setCategories(res?.data?.data || []);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Fetch available discounts
+  const getDiscounts = async () => {
+    try {
+      const res = await axios.get("https://testaoron.limsa.uz/api/discount");
+      setDiscounts(res?.data?.data || []);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     getProduct();
     getColors();
+    getSizes();
+    getCategories();
+    getDiscounts(); // Fetch discounts
   }, []);
 
   const showAddModal = () => {
     setForm({
-      title: '',
-      description: '',
+      title_en: '',
+      title_ru: '',
+      title_de: '',
+      description_en: '',
+      description_ru: '',
+      description_de: '',
       price: '',
       category_id: '',
+      sizes_id: [],
       colors_id: [],
-      size: '',
-      discount_id: null,
       materials: { cotton: '', wool: '' },
+      discount_id: null,
       min_sell: 2,
       files: []
     });
@@ -80,16 +124,20 @@ const Products = () => {
     setEditMode(true);
     setCurrentId(item.id);
     setForm({
-      title: item.title_en || '',
-      description: item.description_en || '',
+      title_en: item.title_en || '',
+      title_ru: item.title_ru || '',
+      title_de: item.title_de || '',
+      description_en: item.description_en || '',
+      description_ru: item.description_ru || '',
+      description_de: item.description_de || '',
       price: item.price || '',
       category_id: item.category?.id || '',
-      colors_id: item.colors?.map(c => c.id.toString()) || [], // Convert to array of strings
-      size: item.sizes?.[0]?.size || '',
-      discount_id: item.discount?.id || null,
+      sizes_id: item.sizes?.map(s => s.id?.toString()) || [],
+      colors_id: item.colors?.map(c => c.id?.toString()) || [],
       materials: item.materials || { cotton: '', wool: '' },
+      discount_id: item.discount || null,
       min_sell: item.min_sell || 2,
-      files: item.images ? [item.images] : [] // Adjust based on your API
+      files: item.images ? [item.images] : []
     });
     setFileList(item.images ? [{ uid: '-1', name: 'image', status: 'done', url: item.images }] : []);
     setIsModalOpen(true);
@@ -101,54 +149,64 @@ const Products = () => {
     setCurrentId(null);
   };
 
-  // Handle file upload
-  const handleUpload = async ({ file, onSuccess, onError }) => {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    try {
-      const res = await axios.post('https://testaoron.limsa.uz/api/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      onSuccess(res.data, file);
-      setForm({ ...form, files: [...form.files, res.data.fileId] }); // Adjust based on your API response
-    } catch (err) {
-      onError(err);
-      toast.error('Upload failed');
-    }
-  };
-
   // Create or update product
   const handleProduct = async () => {
-    const url = editMode 
-      ? `https://testaoron.limsa.uz/api/product/${currentId}`
+    if (!fileList || fileList.length === 0) {
+      toast.error('Please upload at least one product image.');
+      return;
+    }
+    if (!form.sizes_id || form.sizes_id.length === 0) {
+      toast.error('Please select at least one size.');
+      return;
+    }
+    if (!form.colors_id || form.colors_id.length === 0) {
+      toast.error('Please select at least one color.');
+      return;
+    }
+    if (!form.category_id) {
+      toast.error('Please select a category.');
+      return;
+    }
+    if (form.discount_id && !discounts.find(d => d.id === form.discount_id)) {
+      toast.error('Please select a valid discount.');
+      return;
+    }
+
+    // Use POST for both create and edit (since PUT is not supported)
+    const url = editMode
+      ? `https://testaoron.limsa.uz/api/product/${currentId}/update`
       : 'https://testaoron.limsa.uz/api/product';
 
-    const productData = {
-      title: form.title,
-      description: form.description,
-      price: form.price,
-      category_id: form.category_id,
-      colors_id: form.colors_id, // array of strings
-      size: form.size,
-      discount_id: form.discount_id, // object/number or null
-      materials: form.materials, // object
-      min_sell: form.min_sell, // required number
-      files: form.files // array of file IDs
-    };
+    const formData = new FormData();
+    formData.append('title_en', form.title_en);
+    formData.append('title_ru', form.title_ru);
+    formData.append('title_de', form.title_de);
+    formData.append('description_en', form.description_en);
+    formData.append('description_ru', form.description_ru);
+    formData.append('description_de', form.description_de);
+    formData.append('price', form.price);
+    formData.append('category_id', form.category_id); // must be a valid category id
+
+    form.sizes_id.forEach((id) => formData.append('sizes_id[]', id));
+    form.colors_id.forEach((id) => formData.append('colors_id[]', id));
+
+    formData.append('materials', JSON.stringify(form.materials));
+    if (form.discount_id) formData.append('discount_id', form.discount_id);
+    formData.append('min_sell', form.min_sell);
+
+    fileList.forEach((fileObj) => {
+      formData.append('files', fileObj.originFileObj);
+    });
 
     try {
-      const method = editMode ? 'put' : 'post';
+      // Always use POST, even for edit
       await axios({
-        method,
+        method: 'post',
         url,
-        data: productData,
+        data: formData,
         headers: {
           Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
         },
       });
 
@@ -202,14 +260,34 @@ const Products = () => {
               <form onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <Input 
-                    placeholder="Title" 
-                    value={form.title} 
-                    onChange={(e) => setForm({ ...form, title: e.target.value })} 
+                    placeholder="Title (EN)" 
+                    value={form.title_en} 
+                    onChange={(e) => setForm({ ...form, title_en: e.target.value })} 
                   />
                   <Input 
-                    placeholder="Description" 
-                    value={form.description} 
-                    onChange={(e) => setForm({ ...form, description: e.target.value })} 
+                    placeholder="Title (RU)" 
+                    value={form.title_ru} 
+                    onChange={(e) => setForm({ ...form, title_ru: e.target.value })} 
+                  />
+                  <Input 
+                    placeholder="Title (DE)" 
+                    value={form.title_de} 
+                    onChange={(e) => setForm({ ...form, title_de: e.target.value })} 
+                  />
+                  <Input 
+                    placeholder="Description (EN)" 
+                    value={form.description_en} 
+                    onChange={(e) => setForm({ ...form, description_en: e.target.value })} 
+                  />
+                  <Input 
+                    placeholder="Description (RU)" 
+                    value={form.description_ru} 
+                    onChange={(e) => setForm({ ...form, description_ru: e.target.value })} 
+                  />
+                  <Input 
+                    placeholder="Description (DE)" 
+                    value={form.description_de} 
+                    onChange={(e) => setForm({ ...form, description_de: e.target.value })} 
                   />
                   <Input 
                     placeholder="Price" 
@@ -217,12 +295,35 @@ const Products = () => {
                     value={form.price} 
                     onChange={(e) => setForm({ ...form, price: e.target.value })} 
                   />
-                  <Input 
-                    placeholder="Category ID" 
-                    value={form.category_id} 
-                    onChange={(e) => setForm({ ...form, category_id: e.target.value })} 
-                  />
-                  
+                  <Select
+                    placeholder="Select category"
+                    value={form.category_id}
+                    onChange={(value) => setForm({ ...form, category_id: value })}
+                    style={{ width: '100%' }}
+                    showSearch
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                    }
+                  >
+                    {categories.map(category => (
+                      <Option key={category.id} value={category.id}>
+                        {category.name_en}
+                      </Option>
+                    ))}
+                  </Select>
+                  <Select
+                    mode="multiple"
+                    placeholder="Select sizes"
+                    value={form.sizes_id}
+                    onChange={(value) => setForm({ ...form, sizes_id: value })}
+                  >
+                    {sizes.map(size => (
+                      <Option key={size.id} value={size.id.toString()}>
+                        {size.size}
+                      </Option>
+                    ))}
+                  </Select>
                   <Select
                     mode="multiple"
                     placeholder="Select colors"
@@ -235,22 +336,19 @@ const Products = () => {
                       </Option>
                     ))}
                   </Select>
-
-                  <Input 
-                    placeholder="Size" 
-                    value={form.size} 
-                    onChange={(e) => setForm({ ...form, size: e.target.value })} 
-                  />
-                  
-                  <Input 
-                    placeholder="Discount ID" 
-                    type="number"
-                    value={form.discount_id || ''} 
-                    onChange={(e) => setForm({ 
-                      ...form, 
-                      discount_id: e.target.value ? parseInt(e.target.value) : null 
-                    })} 
-                  />
+                  <Select
+                    placeholder="Select discount (optional)"
+                    value={form.discount_id}
+                    onChange={(value) => setForm({ ...form, discount_id: value })}
+                    allowClear
+                    style={{ width: '100%' }}
+                  >
+                    {discounts.map(discount => (
+                      <Option key={discount.id} value={discount.id}>
+                        {discount.name || `ID: ${discount.id}`}
+                      </Option>
+                    ))}
+                  </Select>
 
                   <Input 
                     placeholder="Min Sell" 
@@ -288,10 +386,10 @@ const Products = () => {
                 <div className="mb-4">
                   <h4 className="mb-2">Product Images</h4>
                   <Upload
-                    customRequest={handleUpload}
                     fileList={fileList}
                     onChange={({ fileList }) => setFileList(fileList)}
                     multiple
+                    beforeUpload={() => false} // Prevent auto upload
                   >
                     <Button icon={<UploadOutlined />}>Upload</Button>
                   </Upload>
@@ -311,12 +409,16 @@ const Products = () => {
                   <tr className="bg-gray-300 text-gray-700">
                     <th className="py-2 px-4 border border-gray-300">№</th>
                     <th className="py-2 px-4 border border-gray-300">Images</th>
-                    <th className="py-2 px-4 border border-gray-300">Title</th>
-                    <th className="py-2 px-4 border border-gray-300">Description</th>
+                    <th className="py-2 px-4 border border-gray-300">Title (EN)</th>
+                    <th className="py-2 px-4 border border-gray-300">Title (RU)</th>
+                    <th className="py-2 px-4 border border-gray-300">Title (DE)</th>
+                    <th className="py-2 px-4 border border-gray-300">Description (EN)</th>
+                    <th className="py-2 px-4 border border-gray-300">Description (RU)</th>
+                    <th className="py-2 px-4 border border-gray-300">Description (DE)</th>
                     <th className="py-2 px-4 border border-gray-300">Price</th>
                     <th className="py-2 px-4 border border-gray-300">Category</th>
                     <th className="py-2 px-4 border border-gray-300">Colors</th>
-                    <th className="py-2 px-4 border border-gray-300">Size</th>
+                    <th className="py-2 px-4 border border-gray-300">Sizes</th>
                     <th className="py-2 px-4 border border-gray-300">Discount ID</th>
                     <th className="py-2 px-4 border border-gray-300">Materials</th>
                     <th className="py-2 px-4 border border-gray-300">Min Sell</th>
@@ -335,13 +437,19 @@ const Products = () => {
                         />
                       </td>
                       <td className="py-2 px-4 border border-gray-300">{item?.title_en}</td>
+                      <td className="py-2 px-4 border border-gray-300">{item?.title_ru}</td>
+                      <td className="py-2 px-4 border border-gray-300">{item?.title_de}</td>
                       <td className="py-2 px-4 border border-gray-300">{item?.description_en}</td>
+                      <td className="py-2 px-4 border border-gray-300">{item?.description_ru}</td>
+                      <td className="py-2 px-4 border border-gray-300">{item?.description_de}</td>
                       <td className="py-2 px-4 border border-gray-300">{item?.price}</td>
                       <td className="py-2 px-4 border border-gray-300">{item?.category?.name_en}</td>
                       <td className="py-2 px-4 border border-gray-300">
                         {item?.colors?.map(c => c.color_en).join(', ')}
                       </td>
-                      <td className="py-2 px-4 border border-gray-300">{item?.sizes?.[0]?.size}</td>
+                      <td className="py-2 px-4 border border-gray-300">
+                        {item?.sizes?.map(s => s.size).join(', ')}
+                      </td>
                       <td className="py-2 px-4 border border-gray-300">{item?.discount?.id || '-'}</td>
                       <td className="py-2 px-4 border border-gray-300">
                         {item?.materials ? `Cotton: ${item.materials.cotton}, Wool: ${item.materials.wool}` : '-'}
